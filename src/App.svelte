@@ -134,35 +134,6 @@
 		} catch (error) {
 			err = error;
 		}
-
-		/*		
-                async function hostrun(root, id, port) {
-                  let task
-                  for (let i = 0; i < 8; i++) {
-                    task = root.getTask(id)
-                    if (task) {
-                      break
-                    }
-                    await sleep(200)
-                  }
-                  if (!task) {
-                    comp.connect()
-                    task = {port: port}
-                  }
-                  window.open(window.location.protocol + '//' + window.location.hostname + ':' + task.port,
-                    '_blank');
-					if (task.status < stFinished ) {
-        window.open(window.location.protocol + '//' + window.location.hostname + ':' + task.port, '_blank');
-      } else {
-        window.open('/task/'+task.id, '_blank');
-      }
-                };
-                hostrun(this, response.data.id, response.data.port);
-              }
-            [[end]]
-        })
-        .catch(error => this.$root.errmsg(error));
-*/
 	}
 	function openOptions() {
 		chrome.runtime.openOptionsPage();
