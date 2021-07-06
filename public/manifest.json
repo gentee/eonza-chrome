@@ -1,0 +1,31 @@
+{
+    "name": "Eonza",
+    "description": "Extension for Eonza automation software",
+    "version": "1.0",
+    "manifest_version": 3,
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "storage",
+        "scripting"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "/images/eonza16.png",
+            "32": "/images/eonza32.png",
+            "48": "/images/eonza48.png",
+            "128": "/images/eonza128.png"
+        }
+    },
+    "icons": {
+        "16": "/images/eonza16.png",
+        "32": "/images/eonza32.png",
+        "48": "/images/eonza48.png",
+        "128": "/images/eonza128.png"
+    },
+    "options_ui": {
+        "open_in_tab": false,
+        "page": "options.html"
+    }
+}
