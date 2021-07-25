@@ -4,6 +4,8 @@
 	let eonzaHost = "";
 	let success = "";
 	let tabUrl = "";
+	let tabHtml = "";
+	let tabTitle = "";
 	let lang = "en";
 	let langres = {
 		en: {
@@ -35,17 +37,15 @@
 	let err = "";
 	let list = [];
 
-	/*	chrome.runtime.onMessage.addListener(function (request, sender) {
+	chrome.runtime.onMessage.addListener(function (request, sender) {
 		if (request.action == "getSource") {
-			let pageSource = request.source;
-			var title = pageSource.match(/<title[^>]*>([^<]+)<\/title>/)[1];
-			alert(title);
+			return request.source;
 		}
-	});*/
+	});
 
 	function getSource() {
 		var s = document.documentElement.outerHTML;
-		//		chrome.runtime.sendMessage({ action: "getSource", source: s });
+		chrome.runtime.sendMessage({ action: "getSource", source: s });
 		return s;
 	}
 
@@ -58,17 +58,21 @@
 			active: true,
 			currentWindow: true,
 		});
-		/*		chrome.scripting.executeScript(
+		chrome.scripting.executeScript(
 			{
 				target: { tabId: tab.id },
 				function: getSource,
 			},
 			(e) => {
-				console.log("ret", e[0].result);
+				if (!chrome.runtime.lastError) {
+					/*chrome.runtime.lastError.message;*/
+					tabHtml = e[0].result;
+				}
 			}
-		);*/
+		);
 
 		tabUrl = tab.url;
+		tabTitle = tab.title;
 
 		chrome.storage.sync.get(
 			{
@@ -112,9 +116,11 @@
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					name: script,
+					name: script.name,
 					open: open,
 					url: tabUrl,
+					title: tabTitle,
+					html: script.settings.html ? tabHtml : "",
 				}),
 			});
 			let data = await response.json();
@@ -157,7 +163,7 @@
 	{#each list as script}
 		<li style="display:flex;justify-content:space-between">
 			<div
-				on:click={runScript(script.name, true)}
+				on:click={runScript(script, true)}
 				class="run rleft"
 				title={lng.run}
 			>
@@ -166,7 +172,7 @@
 			</div>
 			<div
 				class="run"
-				on:click={runScript(script.name, false)}
+				on:click={runScript(script, false)}
 				title={lng.runsilently}
 				style="display:flex;align-items:center;flex: 0 0 32px;"
 			>
