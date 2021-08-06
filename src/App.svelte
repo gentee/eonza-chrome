@@ -12,7 +12,7 @@
 			errext: `Eonza is not available at <b>eonzaHost</b>. Try to <b><a href='eonzaHost'
 				style='color:#fff;text-decoration:underline;' target='_blank'>open</a></b> it in the browser.`,
 			help: "Help",
-			helplink: "https://www.eonza.org/",
+			helplink: "https://www.eonza.org/docs/chrome-extension.html",
 			nourl: "Specify Eonza URL in Settings",
 			run: "Run and open the script in the browser",
 			runok: "Script is successfully run",
@@ -24,7 +24,7 @@
 			errext: `Eonza не доступна по адресу <b>eonzaHost</b>. Попробуйте <b><a href='eonzaHost'
 				style='color:#fff;text-decoration:underline;' target='_blank'>открыть</a></b> её в браузере.`,
 			help: "Помощь",
-			helplink: "https://www.eonza.org/ru/",
+			helplink: "https://www.eonza.org/ru/docs/chrome-extension.html",
 			nourl: "Укажите Eonza URL в Настройках",
 			run: "Запустить и открыть скрипт в браузере",
 			runok: "Скрипт успешно запущен",
