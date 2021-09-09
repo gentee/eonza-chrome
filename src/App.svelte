@@ -4,6 +4,7 @@
 	let eonzaHost = "";
 	let success = "";
 	let tabUrl = "";
+	let tabId = 0;
 	let tabHtml = "";
 	let tabTitle = "";
 	let lang = "en";
@@ -43,10 +44,26 @@
 		}
 	});
 
-	function getSource() {
+	function targetGetSource() {
 		var s = document.documentElement.outerHTML;
 		chrome.runtime.sendMessage({ action: "getSource", source: s });
 		return s;
+	}
+
+	function targetFillForm(fillList) {
+		for (let i = 0; i < fillList.length; i++) {
+			let item = fillList[i];
+			let obj = document.getElementById(item.id);
+			if (!obj) {
+				let names = document.getElementsByName(item.id);
+				if (names.length > 0) {
+					obj = names[0];
+				}
+			}
+			if (obj) {
+				obj.value = item.value;
+			}
+		}
 	}
 
 	document.addEventListener("DOMContentLoaded", async function () {
@@ -61,7 +78,7 @@
 		chrome.scripting.executeScript(
 			{
 				target: { tabId: tab.id },
-				function: getSource,
+				function: targetGetSource,
 			},
 			(e) => {
 				if (!chrome.runtime.lastError) {
@@ -70,7 +87,7 @@
 				}
 			}
 		);
-
+		tabId = tab.id;
 		tabUrl = tab.url;
 		tabTitle = tab.title;
 
@@ -107,6 +124,44 @@
 		}
 	}
 
+	async function fillForm(taskId, level) {
+		try {
+			const response = await fetch(`${eonzaHost}/api/fillform`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					taskid: taskId,
+				}),
+			});
+			let data = await response.json();
+			if (!!data.error) {
+				err = data.error;
+			} else {
+				if (data.list) {
+					chrome.scripting.executeScript(
+						{
+							target: { tabId: tabId },
+							function: targetFillForm,
+							args: [data.list],
+						},
+						(e) => {
+							if (chrome.runtime.lastError) {
+								console.log(chrome.runtime.lastError);
+							}
+						}
+					);
+				}
+				if (!data.finished && level < 7) {
+					setTimeout(() => fillForm(taskId, level + 1), 1000);
+				}
+			}
+		} catch (error) {
+			err = error;
+		}
+	}
+
 	async function runScript(script, open) {
 		err = "";
 		try {
@@ -128,7 +183,10 @@
 				err = data.error;
 			} else {
 				success = lng.runok;
-				setTimeout(() => (success = ""), 1000);
+				setTimeout(() => {
+					success = "";
+					fillForm(data.id, 0);
+				}, 1000);
 				if (!eonzaHost.startsWith(`http://localhost`) && open) {
 					setTimeout(() => {
 						let url = new URL(eonzaHost);
